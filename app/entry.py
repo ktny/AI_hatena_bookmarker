@@ -103,10 +103,12 @@ def bookmark_by_gpt(url: str, description: Optional[str] = None):
     if description is not None:
         entry["description"] = description
 
+    # ブックマーク数0は自分がブクマしてないかブコメ非公開記事かわからないのでコメントしない
+    if len(entry["bookmarks"]) == 0:
+        return
+
     # ブックマーク済でなければブックマークする
-    if url not in ["https://anond.hatelabo.jp/20230312181907"] and (
-        AI_HATENA_USERNAME not in [bookmark["user"] for bookmark in entry["bookmarks"]]
-    ):
+    if AI_HATENA_USERNAME not in [bookmark["user"] for bookmark in entry["bookmarks"]]:
         comment = fix_comment(generate_comment(entry))
         print(f"{entry['title']}, {url}")
         print(comment)
