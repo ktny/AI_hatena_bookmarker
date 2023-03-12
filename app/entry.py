@@ -7,7 +7,7 @@ from typing import Any, Dict
 
 import openai
 import requests
-from config import AI_USERNAME, OPENAI_API_KEY, gpt_system_message
+from config import AI_HATENA_USERNAME, AI_USERNAME, OPENAI_API_KEY, gpt_system_message
 from session import create_hatena_session
 
 read_entry_endpoint = "https://b.hatena.ne.jp/entry/jsonlite/"
@@ -87,18 +87,24 @@ def fix_comment(comment: str):
     return result
 
 
+def bookmark_by_gpt(url: str):
+    session = create_hatena_session()
+    entry = read_entry(url)
+
+    print(f"{entry['title']}, {url}")
+
+    # ブックマーク済でなければブックマークする
+    if AI_HATENA_USERNAME not in [bookmark["user"] for bookmark in entry["bookmarks"]]:
+        comment = fix_comment(generate_comment(entry))
+        print(comment)
+        res = bookmark_entry(session, url, comment)
+        print(res.status_code)
+
+
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         url = sys.argv[1]
     else:
         ValueError("情報を取得するURLを指定してください。")
 
-    session = create_hatena_session()
-    entry = read_entry(url)
-    comment = fix_comment(generate_comment(entry))
-
-    print(comment)
-
-    res = bookmark_entry(session, url, comment)
-
-    print(res.text)
+    bookmark_by_gpt(url)

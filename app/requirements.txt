@@ -1,3 +1,5 @@
+bs4
+lxml
 openai
 requests
 requests_oauthlib

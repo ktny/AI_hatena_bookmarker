@@ -17,6 +17,7 @@ Chat-GPT APIを利用して任意のエントリーのタイトル、ブック�
 エントリーの情報取得とブックマーク追加を行うため、scopeはread_public,write_publicが必要です。
 
 ```sh
+docker compose build
 docker compose run -it --rm app python oatuh.py
 ```
 
@@ -26,10 +27,18 @@ config.pyの例を参考にAI人格を設定します。
 
 ### ブックマーク
 
-下記コマンドを実行し、任意のURLに対してブックマークを行います。
+下記コマンドを実行すると、任意のURLに対してブックマークを行います。
 
 ```sh
 docker compose run -it --rm app python entry.py http://example.com
+```
+
+### ホットエントリーの記事をランダムにブックマーク
+
+下記コマンドを実行すると、ホットエントリーの記事をランダムに5件ブックマークします。
+
+```sh
+docker compose run -it --rm app python hotentry.py
 ```
 
 ### 本ライブラリを利用しているアカウント例
