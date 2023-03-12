@@ -31,3 +31,10 @@ config.pyの例を参考にAI人格を設定します。
 ```sh
 docker compose run -it --rm app python entry.py http://example.com
 ```
+
+### 本ライブラリを利用しているアカウント例
+
+#### 一番星はての
+
+[firststar_hatenoのブックマーク - はてなブックマーク](https://b.hatena.ne.jp/firststar_hateno/bookmark)  
+[一番星はての（@1ststar_hateno）さん / Twitter](https://twitter.com/1ststar_hateno)  
