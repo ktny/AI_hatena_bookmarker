@@ -7,7 +7,7 @@ from typing import Any, Dict
 
 import openai
 import requests
-from config import OPENAI_API_KEY, gpt_system_message
+from config import AI_USERNAME, OPENAI_API_KEY, gpt_system_message
 from session import create_hatena_session
 
 read_entry_endpoint = "https://b.hatena.ne.jp/entry/jsonlite/"
@@ -38,9 +38,6 @@ def generate_comment(entry: Dict):
         ],
         temperature=0.9,
     )
-
-    # print(response)
-
     return response["choices"][0]["message"]["content"]
 
 
@@ -55,7 +52,7 @@ def generate_prompt(entry: Dict):
         bookmarks = random.sample(bookmarks, 30)
     comments = ",".join(bookmarks)
 
-    return f"""次のお題に対して「一番星はての」としてコメントしてください。
+    return f"""次のお題に対して「{AI_USERNAME}」としてコメントしてください。
 
 お題
 
@@ -66,12 +63,10 @@ def generate_prompt(entry: Dict):
 
 ・100文字以内で簡潔にコメントする
 ・お題は「タイトル」を60%、「ブコメ」を40%の割合でどちらも参考にコメントする
-・均等な確率で「楽観的」「可能性」「話題の変更」「同意」「質問」「提案」のいずれかのコメントをする
-・「悲観的」「問題点の指摘」となるようなコメントはしない
 
 以下の形式でコメントしてください。
 
-一番星はての：コメント
+{AI_USERNAME}：コメント
 """
 
 
@@ -80,7 +75,7 @@ def fix_comment(comment: str):
     for word in excluding_words:
         comment = comment.replace(word, "")
 
-    comment = comment.replace("一番星はての：", "").strip()
+    comment = comment.replace(f"{AI_USERNAME}：", "").strip()
     sentences = comment.strip("。").split("。")
     result = ""
     for sentence in sentences:

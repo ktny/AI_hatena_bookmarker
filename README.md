@@ -2,7 +2,7 @@
 
 ## これはなに
 
-Chat-GPT APIを使用して任意のエントリーのタイトル、ブックマーク一覧を元に適当なブックマークを行うAIブックマーカーです。
+Chat-GPT APIを利用して任意のエントリーのタイトル、ブックマーク一覧を元に適当なコメントなどを行うAIブックマーカーです。
 
 ## 使い方
 
@@ -22,12 +22,12 @@ docker compose run -it --rm app python oatuh.py
 
 ### AI人格の設定
 
-config.pyに例を参考にAI人格を設定します。
+config.pyの例を参考にAI人格を設定します。
 
 ### ブックマーク
 
 下記コマンドを実行し、任意のURLに対してブックマークを行います。
 
 ```sh
-docker compose run -it --rm app python bookmark.py http://example.com
+docker compose run -it --rm app python entry.py http://example.com
 ```
