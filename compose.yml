@@ -6,6 +6,11 @@ services:
     build: app
     restart: always
     tty: true
-    env_file: .env
     volumes:
       - ./app:/app
+    environment:
+      - HATENA_CONSUMER_KEY=${HATENA_CONSUMER_KEY}
+      - HATENA_CONSUMER_SECRET=${HATENA_CONSUMER_SECRET}
+      - HATENA_ACCESS_TOKEN=${HATENA_ACCESS_TOKEN}
+      - HATENA_ACCESS_TOKEN_SECRET=${HATENA_ACCESS_TOKEN_SECRET}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
