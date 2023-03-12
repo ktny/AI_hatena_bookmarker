@@ -3,12 +3,13 @@ from __future__ import annotations
 import json
 import random
 import sys
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 import openai
 import requests
 from config import AI_HATENA_USERNAME, AI_USERNAME, OPENAI_API_KEY, gpt_system_message
 from session import create_hatena_session
+from tokenizer import extract_nouns
 
 read_entry_endpoint = "https://b.hatena.ne.jp/entry/jsonlite/"
 bookmark_entry_endpoint = "https://bookmark.hatenaapis.com/rest/1/my/bookmark"
@@ -48,21 +49,29 @@ def generate_prompt(entry: Dict):
         if bookmark.get("comment")
     ]
 
-    if len(bookmarks) > 30:
-        bookmarks = random.sample(bookmarks, 30)
+    if len(bookmarks) > 10:
+        bookmarks = random.sample(bookmarks, 10)
     comments = ",".join(bookmarks)
+
+    nouns = extract_nouns(entry["title"])
+
+    print("nouns", nouns)
 
     return f"""次のお題に対して「{AI_USERNAME}」としてコメントしてください。
 
 お題
 
 ・タイトル：{entry["title"]}
+・説明文：{entry["description"]}
 ・ブコメ：{comments}
 
 以下の制約を守ってコメントしてください。
 
-・100文字以内で簡潔にコメントする
-・お題は「タイトル」を60%、「ブコメ」を40%の割合でどちらも参考にコメントする
+・1文でコメントする
+
+以下の単語を絶対に使わないでください。
+
+・{", ".join(nouns)}
 
 以下の形式でコメントしてください。
 
@@ -87,16 +96,21 @@ def fix_comment(comment: str):
     return result
 
 
-def bookmark_by_gpt(url: str):
+def bookmark_by_gpt(url: str, description: Optional[str] = None):
     session = create_hatena_session()
     entry = read_entry(url)
-
-    print(f"{entry['title']}, {url}")
+    entry["description"] = ""
+    if description is not None:
+        entry["description"] = description
 
     # ブックマーク済でなければブックマークする
-    if AI_HATENA_USERNAME not in [bookmark["user"] for bookmark in entry["bookmarks"]]:
+    if url not in ["https://anond.hatelabo.jp/20230312181907"] and (
+        AI_HATENA_USERNAME not in [bookmark["user"] for bookmark in entry["bookmarks"]]
+    ):
         comment = fix_comment(generate_comment(entry))
+        print(f"{entry['title']}, {url}")
         print(comment)
+
         res = bookmark_entry(session, url, comment)
         print(res.status_code)
 
