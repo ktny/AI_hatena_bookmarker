@@ -3,6 +3,7 @@ import random
 import requests
 from bs4 import BeautifulSoup
 from entry import bookmark_by_gpt
+from models import Entry
 
 # ホットエントリページの取得、解析
 res = requests.get("http://b.hatena.ne.jp/hotentry")
@@ -22,7 +23,22 @@ for entry in entries:
     if category in ("世の中", "政治と経済"):
         continue
 
-    hotentries.append((url, description))
+    hotentries.append(Entry(url, title, category, description))
 
-for entry in random.sample(hotentries, 5):
-    bookmark_by_gpt(entry[0], entry[1])
+count = 0
+entried_categories = []
+
+random.shuffle(hotentries)
+tech_bookmarked = False
+
+for entry in hotentries:
+    # テクノロジー記事へのブックマークは1記事に制限する
+    if tech_bookmarked and entry.category == "テクノロジー":
+        continue
+    success = bookmark_by_gpt(entry.url, entry)
+    if success:
+        if entry.category == "テクノロジー":
+            tech_bookmarked = True
+        count += 1
+    if count >= 5:
+        break

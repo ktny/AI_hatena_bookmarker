@@ -8,6 +8,7 @@ from typing import Any, Dict, Optional
 import openai
 import requests
 from config import AI_HATENA_USERNAME, AI_USERNAME, OPENAI_API_KEY, gpt_system_message
+from models import Entry
 from session import create_hatena_session
 from tokenizer import extract_nouns
 
@@ -96,12 +97,13 @@ def fix_comment(comment: str):
     return result
 
 
-def bookmark_by_gpt(url: str, description: Optional[str] = None):
+def bookmark_by_gpt(url: str, entry_info: Optional[Entry] = None) -> bool:
     session = create_hatena_session()
     entry = read_entry(url)
+
     entry["description"] = ""
-    if description is not None:
-        entry["description"] = description
+    if entry_info.description is not None:
+        entry["description"] = entry_info.description
 
     # ブックマーク数0は自分がブクマしてないかブコメ非公開記事かわからないのでコメントしない
     if len(entry["bookmarks"]) == 0:
@@ -110,11 +112,14 @@ def bookmark_by_gpt(url: str, description: Optional[str] = None):
     # ブックマーク済でなければブックマークする
     if AI_HATENA_USERNAME not in [bookmark["user"] for bookmark in entry["bookmarks"]]:
         comment = fix_comment(generate_comment(entry))
-        print(f"{entry['title']}, {url}")
+        print(f"{entry_info.title}, {entry_info.category}")
         print(comment)
 
         res = bookmark_entry(session, url, comment)
-        print(res.status_code)
+        if res.status_code == 200:
+            return True
+
+    return False
 
 
 if __name__ == "__main__":
