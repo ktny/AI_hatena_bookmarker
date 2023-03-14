@@ -7,7 +7,9 @@ def extract_nouns(text: str):
 
     nouns = []
     for token in tokens:
-        if token.part_of_speech.startswith("名詞,固有名詞"):
+        if token.part_of_speech.startswith(
+            "名詞,一般名詞"
+        ) or token.part_of_speech.startswith("名詞,固有名詞"):
             nouns.append(token.surface)
 
     return nouns

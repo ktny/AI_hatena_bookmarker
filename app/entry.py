@@ -116,6 +116,7 @@ def bookmark_by_gpt(url: str, entry_info: Optional[Entry] = None) -> bool:
         print(comment)
 
         res = bookmark_entry(session, url, comment)
+        print(res.status_code)
         if res.status_code == 200:
             return True
 

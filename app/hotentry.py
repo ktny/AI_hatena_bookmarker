@@ -20,7 +20,7 @@ for entry in entries:
     description_dom = entry.select_one(".entrylist-contents-description")
     description = None if description_dom is None else description_dom.text
 
-    if category in ("世の中", "政治と経済"):
+    if category in ("世の中", "政治と経済", "テクノロジー"):
         continue
 
     hotentries.append(Entry(url, title, category, description))
@@ -29,16 +29,10 @@ count = 0
 entried_categories = []
 
 random.shuffle(hotentries)
-tech_bookmarked = False
 
 for entry in hotentries:
-    # テクノロジー記事へのブックマークは1記事に制限する
-    if tech_bookmarked and entry.category == "テクノロジー":
-        continue
     success = bookmark_by_gpt(entry.url, entry)
     if success:
-        if entry.category == "テクノロジー":
-            tech_bookmarked = True
         count += 1
     if count >= 5:
         break
