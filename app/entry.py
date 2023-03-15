@@ -102,7 +102,7 @@ def bookmark_by_gpt(url: str, entry_info: Optional[Entry] = None) -> bool:
     entry = read_entry(url)
 
     entry["description"] = ""
-    if entry_info.description is not None:
+    if entry_info is not None and entry_info.description is not None:
         entry["description"] = entry_info.description
 
     # ブックマーク数0は自分がブクマしてないかブコメ非公開記事かわからないのでコメントしない
@@ -112,7 +112,8 @@ def bookmark_by_gpt(url: str, entry_info: Optional[Entry] = None) -> bool:
     # ブックマーク済でなければブックマークする
     if AI_HATENA_USERNAME not in [bookmark["user"] for bookmark in entry["bookmarks"]]:
         comment = fix_comment(generate_comment(entry))
-        print(f"{entry_info.title}, {entry_info.category}")
+        if entry_info is not None:
+            print(f"{entry_info.title}, {entry_info.category}")
         print(comment)
 
         res = bookmark_entry(session, url, comment)
