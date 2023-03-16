@@ -44,37 +44,23 @@ def generate_comment(entry: Dict):
 
 
 def generate_prompt(entry: Dict):
-    bookmarks = [
-        bookmark["comment"]
-        for bookmark in entry["bookmarks"]
-        if bookmark.get("comment")
-    ]
+    bookmarks = [bookmark["comment"] for bookmark in entry["bookmarks"] if bookmark.get("comment")]
 
-    if len(bookmarks) > 10:
-        bookmarks = random.sample(bookmarks, 10)
+    if len(bookmarks) > 30:
+        bookmarks = random.shuffle(bookmarks)[:30]
     comments = ",".join(bookmarks)
 
     nouns = extract_nouns(entry["title"])
 
     print("nouns", nouns)
 
-    return f"""次のお題に対して「{AI_USERNAME}」としてコメントしてください。
+    return f"""以下のニュースに対して「{AI_USERNAME}」としてコメントしてください。
 
-お題
+* タイトル：{entry["title"]}
 
-・タイトル：{entry["title"]}
-・説明文：{entry["description"]}
-・ブコメ：{comments}
+* 説明文：{entry["description"]}
 
-以下の制約を守ってコメントしてください。
-
-・1文でコメントする
-
-以下の単語を絶対に使わないでください。
-
-・{", ".join(nouns)}
-
-以下の形式でコメントしてください。
+* ニュースに対する他の人のコメント：{comments}
 
 {AI_USERNAME}：コメント
 """
@@ -113,7 +99,7 @@ def bookmark_by_gpt(url: str, entry_info: Optional[Entry] = None) -> bool:
     if AI_HATENA_USERNAME not in [bookmark["user"] for bookmark in entry["bookmarks"]]:
         comment = fix_comment(generate_comment(entry))
         if entry_info is not None:
-            print(f"{entry_info.title}, {entry_info.category}")
+            print(f"{entry_info['title']}, {entry_info['url']}")
         print(comment)
 
         res = bookmark_entry(session, url, comment)
