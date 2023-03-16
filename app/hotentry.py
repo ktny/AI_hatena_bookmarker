@@ -20,7 +20,7 @@ for entry in entries:
     description_dom = entry.select_one(".entrylist-contents-description")
     description = None if description_dom is None else description_dom.text
 
-    if category in ("世の中", "政治と経済", "テクノロジー"):
+    if category in ["政治と経済"]:
         continue
 
     hotentries.append(Entry(url, title, category, description))
