@@ -47,20 +47,21 @@ def generate_prompt(entry: Dict):
     bookmarks = [bookmark["comment"] for bookmark in entry["bookmarks"] if bookmark.get("comment")]
 
     if len(bookmarks) > 30:
-        bookmarks = random.shuffle(bookmarks)[:30]
+        random.shuffle(bookmarks)
+        bookmarks = bookmarks[:30]
     comments = ",".join(bookmarks)
 
     nouns = extract_nouns(entry["title"])
 
     print("nouns", nouns)
 
-    return f"""以下のニュースに対して「{AI_USERNAME}」としてコメントしてください。
+    return f"""以下の記事に対して、{AI_USERNAME}としてコメントしてください。
 
-* タイトル：{entry["title"]}
+タイトル：{entry["title"]}
+説明文：{entry["description"]}
+記事に対する他の人のコメント：{comments}
 
-* 説明文：{entry["description"]}
-
-* ニュースに対する他の人のコメント：{comments}
+著名作品の例示、著名人の発言の引用、ことわざ、四字熟語、慣用句のいずれかを積極的に使用して以下の形式でコメントしてください。
 
 {AI_USERNAME}：コメント
 """
