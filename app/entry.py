@@ -55,24 +55,29 @@ def generate_prompt(entry: Dict):
 
     print("nouns", nouns)
 
-    return f"""以下の記事に対して、{AI_USERNAME}としてコメントしてください。
+    return f"""Please comment on the following article as {AI_USERNAME}.
 
-タイトル：{entry["title"]}
-説明文：{entry["description"]}
-記事に対する他の人のコメント：{comments}
+title: {entry["title"]}
+description: {entry["description"]}
+Other people's comments on the article: {comments}
 
-著名作品の例示、著名人の発言の引用、ことわざ、四字熟語、慣用句のいずれかを積極的に使用して以下の形式でコメントしてください。
+Do not use the following phrases
 
-{AI_USERNAME}：コメント
+* Phrases used in titles
+* Meaningless phrases such as "according to this article", "read this article"
+
+Please comment in Japanese in the following format, actively using examples of famous works, quotations of short statements by famous people, proverbs, four-character phrases, or idiomatic phrases.
+
+{AI_USERNAME}: comment
 """
 
 
 def fix_comment(comment: str):
-    excluding_words = ["（楽観的）", "（可能性）", "（話題の変更）", "（同意）", "（質問）", "（提案）"]
-    for word in excluding_words:
-        comment = comment.replace(word, "")
+    # excluding_words = ["（楽観的）", "（可能性）", "（話題の変更）", "（同意）", "（質問）", "（提案）"]
+    # for word in excluding_words:
+    #     comment = comment.replace(word, "")
 
-    comment = comment.replace(f"{AI_USERNAME}：", "").strip()
+    comment = comment.replace(f"{AI_USERNAME}: ", "").strip()
     sentences = comment.strip("。").split("。")
     result = ""
     for sentence in sentences:
