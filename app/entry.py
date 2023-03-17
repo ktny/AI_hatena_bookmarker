@@ -63,9 +63,15 @@ title:
 
 Please comment according to the following guidelines.
 
-* Make comments that will make those around you laugh with wit and humor.
+* Make a comments that will make those around you laugh with wit and humor.
 * Make a short comment in Japanese, about 1 or 2 sentences.
+* Make a comment on the humor value of at least 8 out of 10.
 """
+
+
+# TODO: ユーモア数値でコメント同士を戦わせる？
+# * Make a comment according to the following format
+# [humor value]: [comment]
 
 
 def fix_comment(comment: str):
