@@ -59,12 +59,12 @@ title:
 {entry.get("description", "")}
 {entry.get("content", "")}
 
-Do not use the following phrases
+---
 
-* Phrases used in titles
-* Meaningless phrases such as "according to this article", "read this article"
+Please comment according to the following guidelines.
 
-Please comment in Japanese in the following format.
+* Make comments that will make those around you laugh with wit and humor.
+* Make comment in Japanese in the following format.
 
 {AI_USERNAME}: comment
 """
