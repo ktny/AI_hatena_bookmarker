@@ -64,7 +64,7 @@ title:
 Please comment according to the following guidelines.
 
 * Make a comment that will make those around you laugh with wit and humor.
-* Make a comment with a humor level of at least 80%.
+* Don't make a comment that make people look stupid.
 * Make a short comment in Japanese, about 1 or 2 sentences.
 * Simulate the following program and generate comments while recursively increasing the degree of humor
 
@@ -96,6 +96,7 @@ def fix_comment(comment: str):
         .replace("）", "")
         .replace("(", "")
         .replace(")", "")
+        .replace("comment = ", "")
         .replace("？。", "？")
         .replace("！。", "！")
     )
