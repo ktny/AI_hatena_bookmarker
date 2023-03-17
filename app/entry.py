@@ -64,19 +64,13 @@ title:
 Please comment according to the following guidelines.
 
 * Make comments that will make those around you laugh with wit and humor.
-* Make comment in Japanese in the following format.
-
-{AI_USERNAME}: comment
 """
 
 
 def fix_comment(comment: str):
-    comment = comment.replace(f"{AI_USERNAME}: ", "").strip()
     sentences = comment.strip("。").split("。")
     result = ""
     for sentence in sentences:
-        if sentence.startswith("あら、"):
-            continue
         if len(result + sentence + "。") <= 100:
             result += sentence + "。"
         else:
