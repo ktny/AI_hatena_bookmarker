@@ -63,9 +63,9 @@ title:
 
 Please comment according to the following guidelines.
 
-* Make a comments that will make those around you laugh with wit and humor.
+* Make a comment that will make those around you laugh with wit and humor.
+* Make a comment with a humor level of at least 80%.
 * Make a short comment in Japanese, about 1 or 2 sentences.
-* Make a comment on the humor value of at least 8 out of 10.
 """
 
 
