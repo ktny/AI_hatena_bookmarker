@@ -77,8 +77,16 @@ def fix_comment(comment: str):
         else:
             break
 
-    result = result.replace("「", "").replace("」", "").replace("（", "").replace("）", "")
-    result = result.replace("？。", "？").replace("！。", "！")
+    result = (
+        result.replace("「", "")
+        .replace("」", "")
+        .replace("（", "")
+        .replace("）", "")
+        .replace("(", "")
+        .replace(")", "")
+        .replace("？。", "？")
+        .replace("！。", "！")
+    )
 
     return result
 
@@ -103,6 +111,9 @@ def bookmark_by_gpt(url: str, entry_info: Optional[Entry] = None) -> bool:
     # ブックマーク済でなければブックマークする
     if AI_HATENA_USERNAME not in [bookmark["user"] for bookmark in entry["bookmarks"]]:
         comment = fix_comment(generate_comment(entry))
+        if comment == "":
+            return False
+
         if entry_info is not None:
             print(f"{entry_info['title']}, {entry_info['url']}")
         print(comment)
