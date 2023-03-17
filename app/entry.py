@@ -64,6 +64,7 @@ title:
 Please comment according to the following guidelines.
 
 * Make comments that will make those around you laugh with wit and humor.
+* Make a short comment in Japanese, about 1 or 2 sentences.
 """
 
 
@@ -76,6 +77,7 @@ def fix_comment(comment: str):
         else:
             break
 
+    result = result.replace("「", "").replace("」", "").replace("（", "").replace("）", "")
     result = result.replace("？。", "？").replace("！。", "！")
 
     return result
