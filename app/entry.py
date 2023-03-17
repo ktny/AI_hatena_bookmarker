@@ -66,25 +66,25 @@ Do not use the following phrases
 * Phrases used in titles
 * Meaningless phrases such as "according to this article", "read this article"
 
-Please comment in Japanese in the following format, actively using examples of famous works, quotations of short statements by famous people, proverbs, four-character phrases, or idiomatic phrases.
+Please comment in Japanese in the following format.
 
 {AI_USERNAME}: comment
 """
 
 
 def fix_comment(comment: str):
-    # excluding_words = ["（楽観的）", "（可能性）", "（話題の変更）", "（同意）", "（質問）", "（提案）"]
-    # for word in excluding_words:
-    #     comment = comment.replace(word, "")
-
     comment = comment.replace(f"{AI_USERNAME}: ", "").strip()
     sentences = comment.strip("。").split("。")
     result = ""
     for sentence in sentences:
+        if sentence.startswith("あら、"):
+            continue
         if len(result + sentence + "。") <= 100:
             result += sentence + "。"
         else:
             break
+
+    result = result.replace("？。", "？").replace("！。", "！")
 
     return result
 
