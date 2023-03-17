@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import random
 import sys
+from parser import parse_page
 from typing import Any, Dict, Optional
 
 import openai
@@ -10,7 +11,6 @@ import requests
 from config import AI_HATENA_USERNAME, AI_USERNAME, OPENAI_API_KEY, gpt_system_message
 from models import Entry
 from session import create_hatena_session
-from tokenizer import extract_nouns
 
 read_entry_endpoint = "https://b.hatena.ne.jp/entry/jsonlite/"
 bookmark_entry_endpoint = "https://bookmark.hatenaapis.com/rest/1/my/bookmark"
@@ -51,15 +51,13 @@ def generate_prompt(entry: Dict):
         bookmarks = bookmarks[:30]
     comments = ",".join(bookmarks)
 
-    nouns = extract_nouns(entry["title"])
-
-    print("nouns", nouns)
-
     return f"""Please comment on the following article as {AI_USERNAME}.
 
-title: {entry["title"]}
-description: {entry["description"]}
-Other people's comments on the article: {comments}
+title:
+{entry["title"]}
+
+{entry.get("description", "")}
+{entry.get("content", "")}
 
 Do not use the following phrases
 
@@ -92,6 +90,11 @@ def fix_comment(comment: str):
 def bookmark_by_gpt(url: str, entry_info: Optional[Entry] = None) -> bool:
     session = create_hatena_session()
     entry = read_entry(url)
+
+    # 特定ドメインはページをパースする
+    if url.startswith("https://anond.hatelabo.jp/"):
+        content = parse_page(url)
+        entry["content"] = content
 
     entry["description"] = ""
     if entry_info is not None and entry_info.description is not None:
