@@ -66,6 +66,12 @@ Please comment according to the following guidelines.
 * Make a comment that will make those around you laugh with wit and humor.
 * Make a comment with a humor level of at least 80%.
 * Make a short comment in Japanese, about 1 or 2 sentences.
+* Simulate the following program and generate comments while recursively increasing the degree of humor
+
+comment = generate(article)
+review = review_text(comment)
+while check_humor(review) < 0.5:
+    comment = update_comment(theme, review)
 """
 
 
