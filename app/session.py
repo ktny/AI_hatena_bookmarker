@@ -2,7 +2,7 @@ import config
 from requests_oauthlib import OAuth1Session
 
 
-def create_hatena_session():
+def create_hatena_session() -> OAuth1Session:
     # 認証情報を使ってOAuth1Sessionオブジェクトを作成
     return OAuth1Session(
         config.HATENA_CONSUMER_KEY,
