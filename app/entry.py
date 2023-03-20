@@ -55,15 +55,17 @@ def bookmark_by_gpt(url: str, entry_info: Optional[Entry] = None) -> bool:
 
     # HTMLをパースして本文を抜き出す
     article_text = parse_page(url)
+    print(f"{article_text}\n")
+
+    # 200字に満たない記事は情報不足としてコメントしない
+    if len(article_text) < 200:
+        return False
 
     # トークン上限を回避するため、3000字程度まで読んだことにする
     article_text = article_text[:3000]
 
     # 記事の要約をキャッシュがあればキャッシュから取得、なければchatGPTに要約してもらう
     cache_file_path = cache_dir + sanitize_filename(url)
-
-    print(url)
-    print(sanitize_filename(url))
 
     try:
         with open(cache_file_path, "r") as f:
@@ -74,7 +76,6 @@ def bookmark_by_gpt(url: str, entry_info: Optional[Entry] = None) -> bool:
             f.write(summary)
 
     print(f"記事の要約: {summary}\n")
-
     entry["summary"] = summary
 
     # ブックマーク数0は自分がブクマしてないかブコメ非公開記事かわからないのでコメントしない
@@ -92,7 +93,7 @@ def bookmark_by_gpt(url: str, entry_info: Optional[Entry] = None) -> bool:
         print(f"コメント: {comment}\n")
 
     res = bookmark_entry(session, url, comment)
-    print(res.status_code)
+    # print(res.status_code)
     if res.status_code == 200:
         return True
 
