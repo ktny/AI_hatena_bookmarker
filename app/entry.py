@@ -29,11 +29,6 @@ def bookmark_entry(session: Any, url: str, comment: str):
     )
 
 
-# TODO: ユーモア数値でコメント同士を戦わせる？
-# * Make a comment according to the following format
-# [humor value]: [comment]
-
-
 def fix_comment(comment: str):
     sentences = comment.strip("。").split("。")
     result = ""
