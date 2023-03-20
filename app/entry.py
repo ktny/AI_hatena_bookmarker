@@ -46,26 +46,31 @@ def generate_comment(entry: Dict):
 def generate_prompt(entry: Dict):
     bookmarks = [bookmark["comment"] for bookmark in entry["bookmarks"] if bookmark.get("comment")]
 
-    if len(bookmarks) > 30:
+    if len(bookmarks) > 10:
         random.shuffle(bookmarks)
-        bookmarks = bookmarks[:30]
+        bookmarks = bookmarks[:10]
     comments = ",".join(bookmarks)
 
     return f"""Please comment on the following article as {AI_USERNAME}.
 
-title:
+# title
+
 {entry["title"]}
+
+# content
 
 {entry.get("description", "")}
 {entry.get("content", "")}
 
----
+# other's comments
 
-Please comment according to the following guidelines.
+{comments}
+
+# Please comment according to the following guidelines.
 
 * Make a comment with wit and humor to the max.
 * Don't make a comment that make people look stupid.
-* Make a short comment in Japanese, about 1 or 2 sentences.
+* Make a short comment in one sentence in Japanese.
 """
 
 
