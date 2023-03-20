@@ -5,14 +5,17 @@ import sys
 from typing import Any, Optional
 
 import requests
+from chat import generate_comment, summarize
 from config import AI_HATENA_USERNAME
-from util.chat import generate_comment, summarize
 from util.models import Entry
 from util.parser import parse_page
 from util.session import create_hatena_session
+from util.util import sanitize_filename
 
 read_entry_endpoint = "https://b.hatena.ne.jp/entry/jsonlite/"
 bookmark_entry_endpoint = "https://bookmark.hatenaapis.com/rest/1/my/bookmark"
+
+cache_dir = "__cache__/"
 
 
 def read_entry(url: str):
@@ -56,9 +59,21 @@ def bookmark_by_gpt(url: str, entry_info: Optional[Entry] = None) -> bool:
     # トークン上限を回避するため、3000字程度まで読んだことにする
     article_text = article_text[:3000]
 
-    summary = summarize(article_text)
+    # 記事の要約をキャッシュがあればキャッシュから取得、なければchatGPTに要約してもらう
+    cache_file_path = cache_dir + sanitize_filename(url)
 
-    print(f"記事の要約: {summary}")
+    print(url)
+    print(sanitize_filename(url))
+
+    try:
+        with open(cache_file_path, "r") as f:
+            summary = f.read()
+    except FileNotFoundError:
+        summary = summarize(article_text)
+        with open(cache_file_path, "w") as f:
+            f.write(summary)
+
+    print(f"記事の要約: {summary}\n")
 
     entry["summary"] = summary
 
@@ -74,7 +89,7 @@ def bookmark_by_gpt(url: str, entry_info: Optional[Entry] = None) -> bool:
 
         if entry_info is not None:
             print(f"{entry_info['title']}, {entry_info['url']}")
-        print(f"コメント: {comment}")
+        print(f"コメント: {comment}\n")
 
     res = bookmark_entry(session, url, comment)
     print(res.status_code)

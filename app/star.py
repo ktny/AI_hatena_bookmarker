@@ -7,8 +7,8 @@ import sys
 
 import openai
 import requests
-from config import AI_USERNAME, HATENA_RK, HATENA_RKS
 from entry import read_entry
+from util.config import AI_USERNAME, HATENA_RK, HATENA_RKS
 from util.parser import parse_bookmark_page
 
 login_url = "https://www.hatena.ne.jp/login"

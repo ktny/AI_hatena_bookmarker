@@ -1,4 +1,4 @@
-import config
+import config as config
 from requests_oauthlib import OAuth1Session
 
 
