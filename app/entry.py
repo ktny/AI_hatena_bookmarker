@@ -108,32 +108,35 @@ def bookmark_by_gpt(url: str, entry_info: Optional[Entry] = None) -> bool:
     entry = read_entry(url)
 
     # 特定ドメインはページをパースする
-    if url.startswith("https://anond.hatelabo.jp/"):
-        content = parse_page(url)
-        entry["content"] = content
+    # if url.startswith("https://anond.hatelabo.jp/"):
+    article_text = parse_page(url)
 
-    entry["description"] = ""
-    if entry_info is not None and entry_info.description is not None:
-        entry["description"] = entry_info.description
+    print(article_text)
 
-    # ブックマーク数0は自分がブクマしてないかブコメ非公開記事かわからないのでコメントしない
-    if len(entry["bookmarks"]) == 0:
-        return
+    entry["content"] = article_text
 
-    # ブックマーク済でなければブックマークする
-    if AI_HATENA_USERNAME not in [bookmark["user"] for bookmark in entry["bookmarks"]]:
-        comment = fix_comment(generate_comment(entry))
-        if comment == "":
-            return False
+    # entry["description"] = ""
+    # if entry_info is not None and entry_info.description is not None:
+    #     entry["description"] = entry_info.description
 
-        if entry_info is not None:
-            print(f"{entry_info['title']}, {entry_info['url']}")
-        print(comment)
+    # # ブックマーク数0は自分がブクマしてないかブコメ非公開記事かわからないのでコメントしない
+    # if len(entry["bookmarks"]) == 0:
+    #     return
 
-        res = bookmark_entry(session, url, comment)
-        print(res.status_code)
-        if res.status_code == 200:
-            return True
+    # # ブックマーク済でなければブックマークする
+    # if AI_HATENA_USERNAME not in [bookmark["user"] for bookmark in entry["bookmarks"]]:
+    #     comment = fix_comment(generate_comment(entry))
+    #     if comment == "":
+    #         return False
+
+    #     if entry_info is not None:
+    #         print(f"{entry_info['title']}, {entry_info['url']}")
+    #     print(comment)
+
+    # res = bookmark_entry(session, url, comment)
+    # print(res.status_code)
+    # if res.status_code == 200:
+    #     return True
 
     return False
 
