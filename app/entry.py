@@ -2,12 +2,11 @@ from __future__ import annotations
 
 import json
 import sys
-from typing import Any, Optional
+from typing import Any
 
 import requests
 from chat import generate_comment, summarize
 from config import AI_HATENA_USERNAME
-from util.models import Entry
 from util.parser import parse_page
 from util.session import create_hatena_session
 from util.util import sanitize_filename
@@ -49,7 +48,7 @@ def fix_comment(comment: str):
     return result
 
 
-def bookmark_by_gpt(url: str, entry_info: Optional[Entry] = None) -> bool:
+def bookmark_by_gpt(url: str) -> bool:
     session = create_hatena_session()
     entry = read_entry(url)
 
@@ -65,7 +64,7 @@ def bookmark_by_gpt(url: str, entry_info: Optional[Entry] = None) -> bool:
     article_text = article_text[:3000]
 
     # 記事の要約をキャッシュがあればキャッシュから取得、なければchatGPTに要約してもらう
-    cache_file_path = cache_dir + sanitize_filename(url)
+    cache_file_path = cache_dir + sanitize_filename(url)[:200]
 
     try:
         with open(cache_file_path, "r") as f:
@@ -78,24 +77,17 @@ def bookmark_by_gpt(url: str, entry_info: Optional[Entry] = None) -> bool:
     print(f"記事の要約: {summary}\n")
     entry["summary"] = summary
 
-    # ブックマーク数0は自分がブクマしてないかブコメ非公開記事かわからないのでコメントしない
-    if len(entry["bookmarks"]) == 0:
-        return
+    # ブックマーク済の場合はコメントしない
+    if AI_HATENA_USERNAME in [bookmark["user"] for bookmark in entry["bookmarks"]]:
+        return False
 
-    # ブックマーク済でなければブックマークする
-    if AI_HATENA_USERNAME not in [bookmark["user"] for bookmark in entry["bookmarks"]]:
-        comment = fix_comment(generate_comment(entry))
-        if comment == "":
-            return False
-
-        if entry_info is not None:
-            print(f"{entry_info['title']}, {entry_info['url']}")
+    comment = fix_comment(generate_comment(entry))
+    if comment:
         print(f"コメント: {comment}\n")
-
-    res = bookmark_entry(session, url, comment)
-    # print(res.status_code)
-    if res.status_code == 200:
-        return True
+        res = bookmark_entry(session, url, comment)
+        print(f"HTTP status: {res.status_code}\n")
+        if res.status_code == 200:
+            return True
 
     return False
 

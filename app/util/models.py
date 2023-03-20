@@ -6,4 +6,3 @@ class Entry:
     url: str
     title: str
     category: str
-    description: str
