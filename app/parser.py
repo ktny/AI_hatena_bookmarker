@@ -2,7 +2,25 @@ import requests
 from bs4 import BeautifulSoup
 
 # 不要なタグを検索するタグ名のタプル
-REMOVE_TAGS = ("style", "script", "noscript", "iframe", "aside", "header", "footer")
+REMOVE_TAGS = (
+    "style",
+    "script",
+    "noscript",
+    "iframe",
+    "aside",
+    "header",
+    "footer",
+    "img",
+    "map",
+    "area",
+    "form",
+    "input",
+    "select",
+    "option",
+    "textarea",
+    "address",
+    "table",
+)
 REMOVE_CLASSNAMES = ("refererlist", "hotentries-wrapper", "sectionfooter", "share-button")
 REMOVE_IDS = ("bookmark-comment-unit",)
 
