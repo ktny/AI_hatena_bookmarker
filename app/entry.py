@@ -2,14 +2,14 @@ from __future__ import annotations
 
 import json
 import sys
-from parser import parse_page
 from typing import Any, Optional
 
 import requests
-from chat import generate_comment, summarize
 from config import AI_HATENA_USERNAME
-from models import Entry
-from session import create_hatena_session
+from util.chat import generate_comment, summarize
+from util.models import Entry
+from util.parser import parse_page
+from util.session import create_hatena_session
 
 read_entry_endpoint = "https://b.hatena.ne.jp/entry/jsonlite/"
 bookmark_entry_endpoint = "https://bookmark.hatenaapis.com/rest/1/my/bookmark"

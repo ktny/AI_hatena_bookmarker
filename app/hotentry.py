@@ -3,7 +3,7 @@ import random
 import requests
 from bs4 import BeautifulSoup
 from entry import bookmark_by_gpt
-from models import Entry
+from util.models import Entry
 
 # ホットエントリページの取得、解析
 res = requests.get("http://b.hatena.ne.jp/hotentry")

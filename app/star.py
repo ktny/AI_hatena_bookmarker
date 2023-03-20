@@ -4,12 +4,12 @@
 import json
 import os
 import sys
-from parser import parse_bookmark_page
 
 import openai
 import requests
 from config import AI_USERNAME, HATENA_RK, HATENA_RKS
 from entry import read_entry
+from util.parser import parse_bookmark_page
 
 login_url = "https://www.hatena.ne.jp/login"
 endpoint = "https://s.hatena.ne.jp/star.add.json"
