@@ -25,6 +25,7 @@ REMOVE_CLASSNAMES = ("refererlist", "hotentries-wrapper", "sectionfooter", "shar
 REMOVE_IDS = ("bookmark-comment-unit",)
 
 HEADLINE_TAGS = ("h1", "h2", "h3", "h4", "h5", "h6")
+EXTRACT_TAGS = (("p", "tweet"),)  # for Togetter
 
 
 def parse_page(url: str):
@@ -33,6 +34,38 @@ def parse_page(url: str):
     soup = BeautifulSoup(html_data, "html.parser")
 
     # HTMLから不要なタグを削除
+    _remove_tags(soup)
+
+    texts = ""
+
+    # titleタグを取得します
+    title_tag = soup.find("title")
+    if title_tag is not None:
+        title = title_tag.get_text()
+        if title:
+            texts += f"{title}\n"
+
+    # meta descriptionタグを取得します
+    descriptoin_tag = soup.find("meta", {"name": "description"})
+    if descriptoin_tag is not None:
+        description = descriptoin_tag.get("content")
+        if description:
+            texts += f"{description}\n"
+
+    # 見出しタグを検索します
+    for h_tag in soup.find_all(HEADLINE_TAGS):
+        text = _extract_headline_and_text(h_tag)
+        texts += f"{text}\n"
+
+    for extract_tag, _class in EXTRACT_TAGS:
+        for tag in soup.find_all(extract_tag, attrs={"class": _class}):
+            text = tag.get_text()
+            texts += f"{text}\n"
+
+    return texts
+
+
+def _remove_tags(soup: BeautifulSoup):
     for remove_tag in REMOVE_TAGS:
         for tag in soup.find_all(remove_tag):
             tag.decompose()
@@ -43,42 +76,29 @@ def parse_page(url: str):
         for tag in soup.find_all(id=remove_tag):
             tag.decompose()
 
+
+def _extract_headline_and_text(h_tag):
     texts = ""
 
-    # タイトルタグを取得します
-    title_tag = soup.find("title")
-    if title_tag is not None:
-        title = title_tag.get_text()
-        if title:
-            texts += f"# {title}\n"
+    # 見出しタグのテキストを取得
+    h_text = h_tag.get_text()
+    texts += f"{h_text}\n"
 
-    # 見出しタグを検索します
-    for h_tag in soup.find_all(HEADLINE_TAGS):
-        # 見出しタグのテキストを取得
-        h_text = h_tag.get_text()
-        texts += f"# {h_text}\n"
+    # 見出しの次のタグを取得
+    next_tag = h_tag.find_next_sibling()
 
-        # print(f"(デバッグ) {h_tag.name}: {h_text}")
+    # 次のタグがなくなるまでループ
+    while next_tag is not None:
+        if next_tag.name in HEADLINE_TAGS:
+            break
 
-        # 見出しの次のタグを取得
-        next_tag = h_tag.find_next_sibling()
+        # タグのテキストを取得
+        text = next_tag.get_text()
+        if text:
+            texts += text
 
-        # 次のタグがなくなるまでループ
-        while next_tag is not None:
-            if next_tag.name in HEADLINE_TAGS:
-                # print(f"(デバッグ) 次の見出しタグ {next_tag.name} が見つかった。")
-                # print(f"(デバッグ) while ブレーク\n")
-                break
-
-            # タグのテキストを取得
-            text = next_tag.get_text()
-            if text:
-                texts += text
-
-            # print(f"(デバッグ) {next_tag.name}: {text}")
-
-            # さらに次のタグを取得してループする
-            next_tag = next_tag.find_next_sibling()
+        # さらに次のタグを取得してループする
+        next_tag = next_tag.find_next_sibling()
 
     return texts
 

@@ -58,7 +58,7 @@ def bookmark_by_gpt(url: str, entry_info: Optional[Entry] = None) -> bool:
 
     summary = summarize(article_text)
 
-    print(summary)
+    # print(summary)
 
     entry["summary"] = summary
 
