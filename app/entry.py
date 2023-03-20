@@ -58,7 +58,7 @@ def bookmark_by_gpt(url: str, entry_info: Optional[Entry] = None) -> bool:
 
     summary = summarize(article_text)
 
-    # print(summary)
+    print(f"記事の要約: {summary}")
 
     entry["summary"] = summary
 
@@ -74,7 +74,7 @@ def bookmark_by_gpt(url: str, entry_info: Optional[Entry] = None) -> bool:
 
         if entry_info is not None:
             print(f"{entry_info['title']}, {entry_info['url']}")
-        print(comment)
+        print(f"コメント: {comment}")
 
     res = bookmark_entry(session, url, comment)
     print(res.status_code)
