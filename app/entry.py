@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 import sys
 from typing import Any
 
@@ -39,6 +40,9 @@ def fix_comment(comment: str):
             break
 
     result = result.replace("？。", "？").replace("！。", "！")
+    match = re.match('^[「"](.+)[」"]。$', result)
+    if match is not None:
+        result = match.groups()[0]
 
     return result
 
@@ -48,7 +52,11 @@ def bookmark_by_gpt(url: str) -> bool:
     entry = read_entry(url) or {}
 
     # HTMLをパースして本文を抜き出す
-    article_text = parse_page(url)
+    try:
+        article_text = parse_page(url)
+    except Exception as e:
+        print(e)
+        return False
     print(f"{article_text}\n")
 
     # 200字に満たない記事は情報不足としてコメントしない

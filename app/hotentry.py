@@ -21,7 +21,8 @@ for entry in entries:
     url = title_link.get("href")
     category = title_link.get("data-entry-category")
 
-    if category in ["政治と経済"]:
+    # はてのは政治経済とテクノロジーには基本的に疎い
+    if category in ["政治と経済", "テクノロジー"]:
         continue
 
     hotentries.append(Entry(url, title, category))
