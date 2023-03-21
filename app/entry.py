@@ -45,7 +45,7 @@ def fix_comment(comment: str):
 
 def bookmark_by_gpt(url: str) -> bool:
     session = create_hatena_session()
-    entry = read_entry(url)
+    entry = read_entry(url) or {}
 
     # HTMLをパースして本文を抜き出す
     article_text = parse_page(url)
@@ -73,7 +73,7 @@ def bookmark_by_gpt(url: str) -> bool:
     entry["summary"] = summary
 
     # ブックマーク済の場合はコメントしない
-    if AI_HATENA_USERNAME in [bookmark["user"] for bookmark in entry["bookmarks"]]:
+    if AI_HATENA_USERNAME in [bookmark["user"] for bookmark in entry.get("bookmarks")]:
         return False
 
     comment = fix_comment(generate_comment(entry))
