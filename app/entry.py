@@ -87,6 +87,7 @@ def bookmark_by_gpt(url: str) -> bool:
     comment = fix_comment(generate_comment(entry))
     if comment:
         print(f"コメント: {comment}\n")
+
         res = bookmark_entry(session, url, comment)
         print(f"HTTP status: {res.status_code}\n")
         if res.status_code == 200:

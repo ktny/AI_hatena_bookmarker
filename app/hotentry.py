@@ -31,12 +31,12 @@ count = 0
 entried_categories = []
 random.shuffle(hotentries)
 
-for i, entry in enumerate(hotentries):
+for i, entry in enumerate(hotentries, start=1):
+    print("####################################################")
     print(f"{i}: [{entry.category}]{entry.title}({entry.url})\n")
     success = bookmark_by_gpt(entry.url)
     if success:
         count += 1
-    print(count)
     if count >= COMMENT_ARTICLE_COUNT:
         print("break")
         break
