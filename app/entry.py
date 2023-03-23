@@ -51,34 +51,14 @@ def bookmark_by_gpt(url: str) -> bool:
     session = create_hatena_session()
     entry = read_entry(url) or {}
 
-    # HTMLをパースして本文を抜き出す
     try:
-        article_text = parse_page(url)
+        entry["summary"] = _summary_url_page(url)
     except Exception as e:
         print(e)
         return False
-    print(f"{article_text}\n")
 
-    # 200字に満たない記事は情報不足としてコメントしない
-    if len(article_text) < 200:
-        return False
-
-    # トークン上限を回避するため、3000字程度まで読んだことにする
-    article_text = article_text[:3000]
-
-    # 記事の要約をキャッシュがあればキャッシュから取得、なければchatGPTに要約してもらう
-    cache_file_path = cache_dir + sanitize_filename(url)[:200]
-
-    try:
-        with open(cache_file_path, "r") as f:
-            summary = f.read()
-    except FileNotFoundError:
-        summary = summarize(article_text)
-        with open(cache_file_path, "w") as f:
-            f.write(summary)
-
-    print(f"記事の要約: {summary}\n")
-    entry["summary"] = summary
+    print(f"タイトル: {entry['title']}\n")
+    print(f"要約: {entry['summary']}\n")
 
     # ブックマーク済の場合はコメントしない
     if AI_HATENA_USERNAME in [bookmark["user"] for bookmark in entry.get("bookmarks")]:
@@ -94,6 +74,31 @@ def bookmark_by_gpt(url: str) -> bool:
             return True
 
     return False
+
+
+def _summary_url_page(url: str) -> str:
+    summary = ""
+
+    try:
+        # 記事の要約をキャッシュがあればキャッシュから取得、なければchatGPTに要約してもらう
+        cache_file_path = cache_dir + sanitize_filename(url)[:200]
+        with open(cache_file_path, "r") as f:
+            summary = f.read()
+
+    except FileNotFoundError:
+        # トークン上限を回避するため、3000字程度まで読んだことにする
+        article_text = parse_page(url)[:3000]
+
+        # 字数が少ない記事は情報不足としてコメントしない
+        if len(article_text) < 200:
+            raise ValueError("Article text length too short")
+
+        print(f"{article_text}\n")
+        summary = summarize(article_text)
+        with open(cache_file_path, "w") as f:
+            f.write(summary)
+
+    return summary
 
 
 if __name__ == "__main__":
