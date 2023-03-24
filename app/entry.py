@@ -84,7 +84,7 @@ def _summary_url_page(url: str) -> str:
         if len(article_text) < 200:
             raise ValueError("Article text length too short")
 
-        # print(f"{article_text}\n")
+        print(f"{article_text}\n")
         summary = summarize(article_text)
         with open(cache_file_path, "w") as f:
             f.write(summary)
