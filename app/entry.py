@@ -1,13 +1,12 @@
 from __future__ import annotations
 
-import json
 import re
 import sys
-from typing import Any
 
-import requests
 from chat import generate_comment, summarize
 from config import AI_HATENA_USERNAME
+from star import add_star_to_best_bookmarker
+from util.hatebu import bookmark_entry, read_entry
 from util.parser import parse_page
 from util.session import create_hatena_session
 from util.util import sanitize_filename
@@ -16,18 +15,6 @@ read_entry_endpoint = "https://b.hatena.ne.jp/entry/jsonlite/"
 bookmark_entry_endpoint = "https://bookmark.hatenaapis.com/rest/1/my/bookmark"
 
 cache_dir = "__cache__/"
-
-
-def read_entry(url: str):
-    response = requests.get(read_entry_endpoint + url)
-    return json.loads(response.text)
-
-
-def bookmark_entry(session: Any, url: str, comment: str):
-    return session.post(
-        bookmark_entry_endpoint,
-        params={"url": url, "comment": comment, "post_twitter": True},
-    )
 
 
 def fix_comment(comment: str):
@@ -51,13 +38,15 @@ def bookmark_by_gpt(url: str) -> bool:
     session = create_hatena_session()
     entry = read_entry(url) or {}
 
+    entry["bookmarks"] = []
+
     try:
         entry["summary"] = _summary_url_page(url)
     except Exception as e:
         print(e)
         return False
 
-    print(f"タイトル: {entry['title']}\n")
+    # print(f"タイトル: {entry['title']}\n")
     print(f"要約: {entry['summary']}\n")
 
     # ブックマーク済の場合はコメントしない
@@ -67,6 +56,8 @@ def bookmark_by_gpt(url: str) -> bool:
     comment = fix_comment(generate_comment(entry))
     if comment:
         print(f"コメント: {comment}\n")
+
+        add_star_to_best_bookmarker(url)
 
         res = bookmark_entry(session, url, comment)
         print(f"HTTP status: {res.status_code}\n")
@@ -93,7 +84,7 @@ def _summary_url_page(url: str) -> str:
         if len(article_text) < 200:
             raise ValueError("Article text length too short")
 
-        print(f"{article_text}\n")
+        # print(f"{article_text}\n")
         summary = summarize(article_text)
         with open(cache_file_path, "w") as f:
             f.write(summary)
