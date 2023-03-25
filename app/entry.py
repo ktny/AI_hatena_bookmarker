@@ -38,6 +38,10 @@ def bookmark_by_gpt(url: str) -> bool:
     session = create_hatena_session()
     entry = read_entry(url) or {}
 
+    # ブックマーク済の場合はコメントしない
+    if AI_HATENA_USERNAME in [bookmark["user"] for bookmark in entry.get("bookmarks")]:
+        return False
+
     entry["bookmarks"] = []
 
     try:
@@ -48,10 +52,6 @@ def bookmark_by_gpt(url: str) -> bool:
 
     # print(f"タイトル: {entry['title']}\n")
     print(f"要約: {entry['summary']}\n")
-
-    # ブックマーク済の場合はコメントしない
-    if AI_HATENA_USERNAME in [bookmark["user"] for bookmark in entry.get("bookmarks")]:
-        return False
 
     comment = fix_comment(generate_comment(entry))
     if comment:
