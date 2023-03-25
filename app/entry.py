@@ -74,7 +74,7 @@ def _summary_url_page(url: str) -> str:
         with open(cache_file_path, "r") as f:
             summary = f.read()
 
-    except FileNotFoundError:
+    except Exception:
         # トークン上限を回避するため、3000字程度まで読んだことにする
         article_text = parse_page(url)[:3000]
 
