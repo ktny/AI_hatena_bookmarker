@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from entry import bookmark_by_gpt
 from util.models import Entry
 
-COMMENT_ARTICLE_COUNT = 2
+COMMENT_ARTICLE_COUNT = 1
 
 # ホットエントリページの取得、解析
 res = requests.get("http://b.hatena.ne.jp/hotentry")
