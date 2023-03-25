@@ -21,18 +21,16 @@ for entry in entries:
     url = title_link.get("href")
     category = title_link.get("data-entry-category")
 
-    entry_model = Entry(url, title, category)
-
     # はてのが言及された記事は優先的にブックマークする
     if "一番星はての" in title:
-        bookmark_by_gpt(entry_model)
+        bookmark_by_gpt(url)
         continue
 
     # はてのは政治経済とテクノロジーには基本的に疎い
     if category in ["政治と経済", "テクノロジー"]:
         continue
 
-    hotentries.append(entry_model)
+    hotentries.append(Entry(url, title, category))
 
 
 count = 0
