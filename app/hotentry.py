@@ -3,10 +3,9 @@ import random
 import requests
 from bs4 import BeautifulSoup
 from entry import bookmark_by_gpt
-from star import add_star_to_best_bookmarker
 from util.models import Entry
 
-COMMENT_ARTICLE_COUNT = 3
+COMMENT_ARTICLE_COUNT = 2
 
 # ホットエントリページの取得、解析
 res = requests.get("http://b.hatena.ne.jp/hotentry")
@@ -35,7 +34,6 @@ random.shuffle(hotentries)
 for i, entry in enumerate(hotentries, start=1):
     print("####################################################")
     print(f"{i}: [{entry.category}]{entry.title}({entry.url})\n")
-    add_star_to_best_bookmarker(entry.url)
     success = bookmark_by_gpt(entry.url)
     if success:
         count += 1
