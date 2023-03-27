@@ -1,5 +1,4 @@
 bs4
-janome
 lxml
 openai
 requests
