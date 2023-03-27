@@ -38,4 +38,4 @@ index = int(select_most_interesting_entry(newentries))
 
 print(index, newentries[index].title)
 
-bookmark_by_gpt(newentries[index].url, True)
+bookmark_by_gpt(newentries[index].url)
