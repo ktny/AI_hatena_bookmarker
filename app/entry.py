@@ -46,7 +46,7 @@ def bookmark_by_gpt(url: str, dryrun: bool = False) -> bool:
     entry["bookmarks"] = []
 
     try:
-        entry["summary"] = _summary_url_page(url)
+        entry["summary"] = _summary_url_page(url, dryrun)
     except Exception as e:
         print(e)
         return False
@@ -67,14 +67,16 @@ def bookmark_by_gpt(url: str, dryrun: bool = False) -> bool:
     return False
 
 
-def _summary_url_page(url: str) -> str:
+def _summary_url_page(url: str, dryrun: bool = False) -> str:
     summary = ""
+    cache_found = False
 
     try:
         # 記事の要約をキャッシュがあればキャッシュから取得、なければchatGPTに要約してもらう
         cache_file_path = cache_dir + sanitize_filename(url)[:200]
         with open(cache_file_path, "r") as f:
             summary = f.read()
+            cache_found = True
 
     except Exception:
         # トークン上限を回避するため、3000字程度まで読んだことにする
@@ -82,13 +84,16 @@ def _summary_url_page(url: str) -> str:
 
         # 字数が少ない記事は情報不足としてコメントしない
         if len(article_text) < 150:
-            raise ValueError("Article text length too short")
+            raise ValueError("記事で読めた文章が短すぎます。")
 
         print(f"{article_text}\n")
 
         summary = summarize(article_text)
         with open(cache_file_path, "w") as f:
             f.write(summary)
+
+    if cache_found and not dryrun:
+        raise ValueError("すでに確認済の記事です。")
 
     return summary
 
