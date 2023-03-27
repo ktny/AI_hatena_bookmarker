@@ -1,17 +1,18 @@
-import random
+# TODO: hotentryと合わせてリファクタリング
 
 import requests
 from bs4 import BeautifulSoup
+from chat import select_most_interesting_entry
 from entry import bookmark_by_gpt
 from util.models import Entry
 
 COMMENT_ARTICLE_COUNT = 1
 
-# ホットエントリページの取得、解析
-res = requests.get("http://b.hatena.ne.jp/hotentry")
+# 新着エントリページの取得、解析
+res = requests.get("https://b.hatena.ne.jp/entrylist/all")
 soup = BeautifulSoup(res.text, "html.parser")
 
-hotentries = []
+newentries = []
 entries = soup.select(".entrylist-main .entrylist-contents-main")
 
 
@@ -30,19 +31,11 @@ for entry in entries:
     if category in ["政治と経済", "テクノロジー"]:
         continue
 
-    hotentries.append(Entry(url, title, category))
+    newentries.append(Entry(url, title, category))
 
 
-count = 0
-entried_categories = []
-random.shuffle(hotentries)
+index = int(select_most_interesting_entry(newentries))
 
-for i, entry in enumerate(hotentries, start=1):
-    print("####################################################")
-    print(f"{i}: [{entry.category}]{entry.title}({entry.url})\n")
-    success = bookmark_by_gpt(entry.url)
-    if success:
-        count += 1
-    if count >= COMMENT_ARTICLE_COUNT:
-        print("break")
-        break
+print(index, newentries[index].title)
+
+bookmark_by_gpt(newentries[index].url, True)

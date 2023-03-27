@@ -8,7 +8,7 @@ from util.models import Entry
 COMMENT_ARTICLE_COUNT = 1
 
 # ホットエントリページの取得、解析
-res = requests.get("http://b.hatena.ne.jp/hotentry")
+res = requests.get("https://b.hatena.ne.jp/hotentry/all")
 soup = BeautifulSoup(res.text, "html.parser")
 
 hotentries = []

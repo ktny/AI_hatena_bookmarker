@@ -35,7 +35,7 @@ def fix_comment(comment: str):
     return result
 
 
-def bookmark_by_gpt(url: str, dryrun: bool = True) -> bool:
+def bookmark_by_gpt(url: str, dryrun: bool = False) -> bool:
     session = create_hatena_session()
     entry = read_entry(url) or {}
 
