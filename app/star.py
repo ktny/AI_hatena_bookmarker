@@ -25,7 +25,7 @@ def add_star(uri: str):
     print(json.loads(response.text))
 
 
-def add_star_to_best_bookmarker(url: str):
+def add_star_to_best_bookmarker(url: str, dryrun: bool):
     entry = read_entry(url)
     bookmark_page_url = entry["entry_url"]
     bookmarks = parse_bookmark_page(bookmark_page_url)
@@ -36,7 +36,8 @@ def add_star_to_best_bookmarker(url: str):
         if bookmark["username"] == best_username:
             print("次のユーザーのコメントが選ばれました")
             print(bookmark)
-            add_star(bookmark["link"])
+            if not dryrun:
+                add_star(bookmark["link"])
             break
 
 

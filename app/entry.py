@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import re
 import sys
 
@@ -34,7 +35,7 @@ def fix_comment(comment: str):
     return result
 
 
-def bookmark_by_gpt(url: str) -> bool:
+def bookmark_by_gpt(url: str, dryrun: bool = True) -> bool:
     session = create_hatena_session()
     entry = read_entry(url) or {}
 
@@ -56,11 +57,12 @@ def bookmark_by_gpt(url: str) -> bool:
     comment = fix_comment(generate_comment(entry))
     if comment:
         print(f"コメント: {comment}\n")
-        add_star_to_best_bookmarker(url)
-        res = bookmark_entry(session, url, comment)
-        print(f"HTTP status: {res.status_code}\n")
-        if res.status_code == 200:
-            return True
+        add_star_to_best_bookmarker(url, dryrun)
+        if not dryrun:
+            res = bookmark_entry(session, url, comment)
+            print(f"HTTP status: {res.status_code}\n")
+            if res.status_code == 200:
+                return True
 
     return False
 
@@ -79,10 +81,11 @@ def _summary_url_page(url: str) -> str:
         article_text = parse_page(url)[:3000]
 
         # 字数が少ない記事は情報不足としてコメントしない
-        if len(article_text) < 200:
+        if len(article_text) < 150:
             raise ValueError("Article text length too short")
 
         print(f"{article_text}\n")
+
         summary = summarize(article_text)
         with open(cache_file_path, "w") as f:
             f.write(summary)
@@ -91,9 +94,15 @@ def _summary_url_page(url: str) -> str:
 
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        url = sys.argv[1]
-    else:
-        ValueError("情報を取得するURLを指定してください。")
+    parser = argparse.ArgumentParser(description="Process some files.")
+    parser.add_argument("url", help="ブックマークなどを実行するURL")
+    parser.add_argument("-d", "--dryrun", action="store_true", help="実際には実行しない")
 
-    bookmark_by_gpt(url)
+    args = parser.parse_args()
+
+    if args.url:
+        print(f"URL is {args.url}")
+    if args.dryrun:
+        print("Dryrunで実行します")
+
+    bookmark_by_gpt(args.url, args.dryrun)
