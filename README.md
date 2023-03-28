@@ -36,4 +36,3 @@ docker compose run -it --rm app python hotentry.py
 #### 一番星はての
 
 [firststar_hatenoのブックマーク - はてなブックマーク](https://b.hatena.ne.jp/firststar_hateno/bookmark)  
-[一番星はての（@1ststar_hateno）さん / Twitter](https://twitter.com/1ststar_hateno)  
