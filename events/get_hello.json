@@ -1,0 +1,8 @@
+{
+  "resource": "/hello",
+  "path": "/hello",
+  "httpMethod": "GET",
+  "requestContext": {
+    "Dummy": "Dummy"
+  }
+}
