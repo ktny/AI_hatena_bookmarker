@@ -1,0 +1,49 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Sample SAM Template for AI-Bookmarker
+
+Resources:
+  AIBookmarkerFunction:
+    # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function
+    Metadata:
+      Dockerfile: Dockerfile
+      DockerContext: ./src
+      DockerTag: python3.10-v1
+    Properties:
+      PackageType: Image
+      Architectures:
+        - x86_64
+      MemorySize: 128
+      Timeout: 600
+      Events:
+        AIBookmarkerEventBridge:
+          Type: Schedule
+          Properties:
+            Name: AIBookmarkerEventBridge
+            Description: "Scheduled rule to invoke API Gateway"
+            Schedule: cron(0 1-23/2 * * ? *)
+            Enabled: True
+            Input: |
+              {
+                "resource": "/bookmark",
+                "path": "/bookmark",
+                "httpMethod": "POST",
+                "queryStringParameters": {
+                  "url": "https://anond.hatelabo.jp/20060923213531"
+                },
+                "requestContext": {
+                  "Dummy": "Dummy"
+                }
+              }
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  AIBookmarkerFunction:
+    Description: "Firststar AIBookmarker Lambda Function ARN"
+    Value: !GetAtt AIBookmarkerFunction.Arn
+  AIBookmarkerFunctionIamRole:
+    Description: "Implicit IAM Role created for Firststar AIBookmarker function"
+    Value: !GetAtt AIBookmarkerFunctionRole.Arn

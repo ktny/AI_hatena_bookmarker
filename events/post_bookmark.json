@@ -1,0 +1,11 @@
+{
+  "resource": "/bookmark",
+  "path": "/bookmark",
+  "httpMethod": "POST",
+  "queryStringParameters": {
+    "url": "https://anond.hatelabo.jp/20060923213531"
+  },
+  "requestContext": {
+    "Dummy": "Dummy"
+  }
+}
